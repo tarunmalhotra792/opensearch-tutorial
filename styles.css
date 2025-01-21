@@ -1,5 +1,5 @@
 <style>
-/* Basic Reset */
+        /* Basic Reset */
         * {
             margin: 0;
             padding: 0;
@@ -40,7 +40,7 @@
             text-decoration: underline;
         }
 
-        .intros {
+        .intro {
             text-align: center;
             margin: 20px 0;
             padding: 20px;
@@ -102,4 +102,4 @@
         footer a:hover {
             text-decoration: underline;
         }
- </style>
+    </style>
