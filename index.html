@@ -64,14 +64,153 @@
         </section>
 
         <section id="quick-installation-opensearch">
-            <h2>Quick Installation - OpenSearch</h2>
-            <p>To install OpenSearch, follow these steps:</p>
-            <ol>
-                <li>Download the OpenSearch package for your operating system.</li>
-                <li>Install dependencies such as Java and configure system settings.</li>
-                <li>Run the installation command and start OpenSearch.</li>
-                <li>Verify the installation by checking the OpenSearch status.</li>
-            </ol>
+            <br><h2>Quick Installation - OpenSearch</h2></br>
+            <p>To quickly get started using OpenSearch and OpenSearch Dashboards, we will be using docker to deploy opensearch containers. </p>
+            <p>Before proceeding, you need to install Docker and Docker Compose on your local machine.</p>
+            <p>Docker Installation steps > <a href="https://docs.docker.com/get-started/get-docker" target="_blank">Docker Installation Steps</a></p>
+            
+            <br><h4><i>What is Docker Compose ?</br></i></h4> 
+
+            <p>Docker Compose is a tool that simplifies the process of defining, running, and managing multi-container applications in Docker. It allows you to configure and orchestrate multiple Docker containers that work together as a single service, using a simple YAML file for configuration.</p>
+            <p>To install the Opensearch, we need a special file, called a Compose file, that Docker Compose uses to define and create the containers in your cluster.</p>
+            <p><br>The OpenSearch Project provides a sample Compose file that you can use to get started. We will download it in below section.</br></p> 
+            <p><br> Run Pre requisite commands </p></br>
+            <h3><b>Step 1: Run Pre-requisite Commands</b></h3>
+           <ol>
+        <li>
+            Disable memory paging and swapping performance on the host to improve performance:
+            <pre><code>sudo swapoff -a</code></pre>
+        </li>
+        <li>
+            Edit the sysctl config file that defines the host’s max map count:
+            <pre><code>sudo vi /etc/sysctl.conf</code></pre>
+        </li>
+        <li>
+            Set max map count to the recommended value of 262144:
+            <pre><code>vm.max_map_count=262144</code></pre>
+        </li>
+        <li>
+            Reload the kernel parameters:
+            <pre><code>sudo sysctl -p</code></pre>
+        </li>
+    </ol>
+    <p><br>For more information link: <a href="https://opensearch.org/docs/latest/install-and-configure/install-opensearch/docker/#setting-a-custom-admin-password" target="_blank">OpenSearch Docker Installation Guide</br></a></p>
+    <h1><br>Install and Configure OpenSearch with Docker</br></h1>
+    <h2><br>Step 2: Download the Sample Compose File</h2>
+    <p>
+        <br>Download the sample Compose file to your host. You can use command line utilities like <code>curl</code> and <code>wget</code>, or manually copy <code>docker-compose.yml</code> from the OpenSearch Project documentation repository using a web browser.
+    </p>
+    <p><br>To use cURL, send the following request:</br></p>
+    <pre><code>curl -O https://raw.githubusercontent.com/opensearch-project/documentation-website/2.18/assets/examples/docker-compose.yml</code></pre>
+
+    <h3><br>Setting a Custom Admin Password</br></h3>
+    <p>Create an empty file named <code>.env</code> and add the following line, then save it:</p>
+    <pre><code>OPENSEARCH_INITIAL_ADMIN_PASSWORD = &lt;custom-admin-password&gt;</code></pre>
+    <p>
+        For OpenSearch 2.12 or greater, set a new custom admin password before installation using the following command:
+    </p>
+    <p><strong>Note:</strong> The password must meet the following requirements:</p>
+    <ul>
+        <li>Minimum of 8 characters</li>
+        <li>At least one uppercase letter</li>
+        <li>At least one lowercase letter</li>
+        <li>At least one digit</li>
+        <li>At least one special character</li>
+    </ul>
+    
+    
+    <p><strong>Note:</strong> Place both the <code>docker-compose.yml</code> and <code>.env</code> files in the same location where Docker is installed.</p>
+
+    <p><br>Run the following command on the command line to set the custom admin password and move to Step 3:</p>
+    <pre><code>export OPENSEARCH_INITIAL_ADMIN_PASSWORD=&lt;custom-admin-password&gt;</code></pre>
+
+    <h3><br><b>Step 3: Download and Run OpenSearch Container</b></h2>
+    <p><br>Run OpenSearch in a Docker container.</p>
+    <p>
+        Official OpenSearch images are hosted on Docker Hub. If you want to inspect the images, you can pull them individually using <code>docker pull</code>, such as in the following examples:
+    </p>
+    <br> 
+    <h3>Docker Hub Commands:<br></h3>
+    <br> 
+    <pre><code>docker pull opensearchproject/opensearch:2
+docker pull opensearchproject/opensearch-dashboards:2</code></pre>
+   <br> 
+     <h2>Verify Docker Setup with OpenSearch<br></h2>
+    <br> 
+    <p>
+        Before continuing, you should verify that Docker is working correctly by deploying OpenSearch in a single container.
+    </p>
+    <br> 
+    <h4>Run the Following Command</h4>
+    <p>This command maps ports 9200 and 9600, sets the discovery type to <code>single-node</code>, and requests the newest image of OpenSearch:</p>
+    <br>
+    <pre><code>docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchproject/opensearch:latest</code></pre>
+
+    <br>
+    <h3>Send a Request to Port 9200</h3>
+    <p>The default username is <code>admin</code>.</p>
+    <p>For example, if the new password is <code>Learn@123</code>:</p>
+    <br>
+    <pre><code>curl https://localhost:9200 -ku admin:Learn@123</code></pre>
+    <br>
+    <h4>Expected Response</h4>
+    <p>You should get a response that looks like this:</p>
+    <pre><code>{
+    "name": "opensearch-node1",
+    "cluster_name": "opensearch-cluster",
+    "cluster_uuid": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "version": {
+        "number": "2.x.x",
+        "build_flavor": "default",
+        "build_type": "docker",
+        "build_hash": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "build_date": "YYYY-MM-DDTHH:mm:ssZ",
+        "build_snapshot": false,
+        "lucene_version": "x.x.x",
+        "minimum_wire_compatibility_version": "x.x.x",
+        "minimum_index_compatibility_version": "x.x.x"
+    },
+    "tagline": "The OpenSearch Project: https://opensearch.org/"
+}</code></pre> 
+      <br>
+     <h2>Stop a Running Container (Not in cluster)</h2>
+     <br>
+    <p>Before stopping the running container, display a list of all running containers and copy the container ID for the OpenSearch node you are testing.</p>
+    <br>
+    <pre><code>docker container ls</code></pre>
+    
+    <p>Stop the running container by passing the container ID to <code>docker stop</code>:</p>
+    <br>
+    <pre><code>docker stop &lt;containerId&gt;</code></pre>
+    <br>
+    <h2>Deploy an OpenSearch Cluster Using Docker Compose</h2>
+    <br>
+    <p>
+        Although it is technically possible to build an OpenSearch cluster by creating containers one command at a time, it is far easier to define your environment in a YAML file and let Docker Compose manage the cluster. The following section contains example YAML files that you can use to launch a predefined cluster with OpenSearch and OpenSearch Dashboards.
+    </p>
+
+    <h3>Steps to Deploy:</h3>
+    <ol>
+        <li>Navigate to the Docker directory and run the following command:</li>
+        <pre><code>docker-compose up -d</code></pre>
+
+        <li>Verify that the service containers started correctly:</li>
+        <pre><code>docker-compose ps</code></pre>
+
+        <li>If a container failed to start, review the service logs:</li>
+        <pre><code># If you don't pass a service name, docker-compose will show you logs from all of the nodes
+docker-compose logs &lt;serviceName&gt;</code></pre>
+
+        <li>Open the following URL to start exploring OpenSearch:</li>
+        <p><a href="http://localhost:5601/app/login" target="_blank">http://localhost:5601/app/login</a></p>
+
+        <li>Stop the running containers in your cluster when you're done:</li>
+        <pre><code>docker-compose down</code></pre>
+    </ol>
+
+    
+    
+    
         </section>
     </main>
     <footer>
